@@ -7,12 +7,12 @@ import sessionFileStore from 'session-file-store';
 import cookieParser from 'cookie-parser'
 
 /**
- * express-session 모듈은 타입스크립트 기반이 아니기 때문에, 세션에 새로운 프로퍼티를 추가하려면 declaration merging 이 필요하다
+ * 세션에 새로운 프로퍼티를 추가하려면 declaration merging을 해 주어야 함
  *
  * 참조: https://dev.to/chris927/extending-express-types-with-typescript-declaration-merging-typescript-4-3jh
  */
-declare module "express-session" {
-	interface Session {
+declare module 'express-session' {
+	interface SessionData {
 		num?: number;
 	}
 }
@@ -54,12 +54,12 @@ app.use(session({
  */
 app.get('/', (req, res) => {
 	console.log(req.sessionID, req.session);
-	const { num = 0 } = req.session;
+	const {num = 0} = req.session;
 	/**
 	 * 세션을 보다 쉽게 구분할 수 있게 숫자 데이터를 추가해준다.
 	 */
-	req.session.num  = num + 1
-	const body = { num: req.session.num }
+	req.session.num = num + 1
+	const body = {num: req.session.num}
 
 	return res.json(body)
 })
