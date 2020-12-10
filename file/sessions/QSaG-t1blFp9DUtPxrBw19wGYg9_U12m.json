@@ -1,0 +1,10 @@
+{
+  "cookie": {
+    "originalMaxAge": 60000,
+    "expires": "2020-12-10T06:24:04.408Z",
+    "httpOnly": true,
+    "path": "/"
+  },
+  "num": 1,
+  "__lastAccess": 1607581384408
+}

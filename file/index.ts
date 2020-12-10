@@ -1,9 +1,14 @@
+/**
+ * node.js 모듈은 모두 commonJs 방식을 따르기 때문에, `tsconfig.json` 에 `esModuleInterop: true` 를 추가해 줘야만 default import가 가능하다.
+ */
 import express from 'express';
 import session from 'express-session';
 import sessionFileStore from 'session-file-store';
 import cookieParser from 'cookie-parser'
 
 /**
+ * express-session 모듈은 타입스크립트 기반이 아니기 때문에, 세션에 새로운 프로퍼티를 추가하려면 declaration merging 이 필요하다
+ *
  * 참조: https://dev.to/chris927/extending-express-types-with-typescript-declaration-merging-typescript-4-3jh
  */
 declare module "express-session" {
@@ -50,7 +55,11 @@ app.use(session({
 app.get('/', (req, res) => {
 	console.log(req.sessionID, req.session);
 	const { num = 0 } = req.session;
-	const body = { num: num + 1 }
+	/**
+	 * 세션을 보다 쉽게 구분할 수 있게 숫자 데이터를 추가해준다.
+	 */
+	req.session.num  = num + 1
+	const body = { num: req.session.num }
 
 	return res.json(body)
 })
