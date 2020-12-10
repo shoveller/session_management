@@ -3,8 +3,8 @@
  */
 import express from 'express';
 import session from 'express-session';
-import sessionFileStore from 'session-file-store';
 import cookieParser from 'cookie-parser'
+import expressMysqlSession, { Schema, Options } from 'express-mysql-session';
 
 /**
  * 세션에 새로운 프로퍼티를 추가하려면 declaration merging을 해 주어야 함
@@ -12,6 +12,24 @@ import cookieParser from 'cookie-parser'
 declare module 'express-session' {
 	interface SessionData {
 		num?: number;
+	}
+}
+
+declare module 'express-mysql-session' {
+	interface Options {
+		host?: string;
+		port?: number;
+		user?: string;
+		password?: string;
+		database?: string;
+		clearExpired?: boolean;
+		checkExpirationInterval?: number;
+		expiration?: number;
+		createDatabaseTable?: boolean;
+		connectionLimit?: number;
+		endConnectionOnClose?: boolean;
+		charset?: string;
+		schema?: Partial<Schema>;
 	}
 }
 
@@ -25,11 +43,31 @@ const app = express()
  */
 app.use(cookieParser())
 
+const options: Options = {
+	host: 'localhost',
+	port: 3306,
+	user: 'root',
+	password: 'password',
+	database: 'session',
+	charset: 'utf8mb4_bin',
+	clearExpired: true,
+	checkExpirationInterval: 900000,
+	expiration: 86400000,
+	schema: {
+		tableName: 'sessions',
+		columnNames: {
+			session_id: 'session_id',
+			expires: 'expires',
+			data: 'data'
+		}
+	}
+}
+
 /**
  * 스토어 인스턴스 초기화
  */
-const FileStore = sessionFileStore(session)
-const store = new FileStore()
+const MySQLStore = expressMysqlSession(session as any)
+const store = new MySQLStore(options)
 
 const oneSecond = 1000
 const oneMinute = oneSecond * 60
