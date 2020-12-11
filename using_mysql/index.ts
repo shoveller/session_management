@@ -43,6 +43,10 @@ const app = express()
  */
 app.use(cookieParser())
 
+const oneSecond = 1000
+const oneMinute = oneSecond * 60
+const oneHour = oneMinute * 60
+const oneDay = oneHour * 24
 const options: Options = {
 	host: 'localhost',
 	port: 3306,
@@ -51,8 +55,8 @@ const options: Options = {
 	database: 'session',
 	charset: 'utf8mb4_bin',
 	clearExpired: true,
-	checkExpirationInterval: 900000,
-	expiration: 86400000,
+	checkExpirationInterval: 15 * oneMinute,
+	expiration: oneDay,
 	schema: {
 		tableName: 'sessions',
 		columnNames: {
@@ -68,9 +72,6 @@ const options: Options = {
  */
 const MySQLStore = expressMysqlSession(session as any)
 const store = new MySQLStore(options)
-
-const oneSecond = 1000
-const oneMinute = oneSecond * 60
 
 /**
  * 세션 스토어 초기화
