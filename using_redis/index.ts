@@ -47,12 +47,17 @@ const oneMinute = oneSecond * 60
  * 세션 스토어 초기화
  */
 app.use(session({
-	secret: 'keyboard cat',
-	resave: false,
-	saveUninitialized: true,
+	secret: 'keyboard cat', // 세션 암호화에 사용하는 키값
+	name: 'cat', // 웹 브라우저에서의 세션 이름(default: connect.sid)
+	resave: false, // true로 설정하면, 값이 바뀌지 않더라도 새로저장
+	saveUninitialized: true, // 접속후에 바로 세션을 생성하는가?
 	store,
-	cookie: {
-		maxAge: oneMinute
+	cookie: { // 클라이언트 쿠키
+		path: '/', // 쿠키의 경로
+		httpOnly: true, // 이 쿠키는 자바스크립트로 접근할 수 없는가?
+		secure: false, // 브라우저에서 https로만 쿠키를 전송하는가?
+		maxAge: oneMinute, // 만료 기간
+		domain: 'localhost' // 크키의 도메인
 	}
 }))
 
@@ -60,7 +65,7 @@ app.use(session({
  * 라우터 초기화
  */
 app.get('/', (req, res) => {
-	console.log(req.sessionID, req.session);
+	console.log('세션 생성됨',req.sessionID, req.session);
 	const {num = 0} = req.session;
 	/**
 	 * 세션을 보다 쉽게 구분할 수 있게 숫자 데이터를 추가해준다.
